@@ -113,3 +113,118 @@ export const projects: Project[] = [
     video: "/images/RepararIA/demo.mp4",
     images: [
       {
+        src: "/images/RepararIA/portada.webp",
+        alt: { es: "Recorrido por RepararIA: inicio, captura y diagnóstico", en: "RepararIA walkthrough: home, capture and diagnosis" },
+      },
+    ],
+  },
+  {
+    slug: "calmwrist",
+    title: "CalmWrist",
+    device: "watch",
+    platform: { es: "App para smartwatch · Wear OS", en: "Smartwatch app · Wear OS" },
+    tagline: { es: "Intervención proactiva para crisis de ansiedad.", en: "Proactive help for anxiety attacks." },
+    description: {
+      es: "Detecta en el pulso cuándo empieza una crisis de ansiedad y actúa antes de que escale, sin que la persona tenga que tocar nada en el peor momento.",
+      en: "Detects from the heart rate when an anxiety attack is starting and acts before it escalates, without the person having to touch anything at the worst moment.",
+    },
+    highlights: [
+      {
+        es: "Respiración guiada con vibraciones sincronizadas que arranca sola.",
+        en: "Guided breathing with synced haptics that starts on its own.",
+      },
+      {
+        es: "Mensajes de apoyo generados con Gemini según el contexto de cada persona.",
+        en: "Supportive messages generated with Gemini for each person's context.",
+      },
+      {
+        es: "Historial y carta mensual para ver patrones, también junto al terapeuta.",
+        en: "History and a monthly letter to spot patterns, also alongside a therapist.",
+      },
+    ],
+    tags: ["Kotlin", "Jetpack Compose", "Wear OS", "Gemini"],
+    github: "https://github.com/JuanJoMJ20/CalmWrist",
+    sheet: "/fichas/calmwrist.html",
+    download: "https://github.com/JuanJoMJ20/CalmWrist/releases/download/v1/CalmWrist.apk",
+    downloadLabel: { es: "Descargar .apk · Wear OS", en: "Download .apk · Wear OS" },
+    images: [
+      {
+        src: "/images/CalmWrist/calma.webp",
+        alt: { es: "CalmWrist en reposo: tu ritmo está estable", en: "CalmWrist at rest: your heart rate is steady" },
+        label: { es: "Calma", en: "Calm" },
+      },
+      {
+        src: "/images/CalmWrist/crisis-guia.webp",
+        alt: { es: "CalmWrist guiando la respiración en una crisis", en: "CalmWrist guiding breathing during an attack" },
+        label: { es: "Crisis · respiración guiada", en: "Attack · guided breathing" },
+      },
+      {
+        src: "/images/CalmWrist/resuelto.webp",
+        alt: { es: "CalmWrist confirma que el episodio pasó", en: "CalmWrist confirms the episode is over" },
+        label: { es: "Episodio superado", en: "Episode over" },
+      },
+      {
+        src: "/images/CalmWrist/historial.webp",
+        alt: { es: "Historial de episodios y su tendencia", en: "Episode history and its trend" },
+        label: { es: "Historial", en: "History" },
+      },
+      {
+        src: "/images/CalmWrist/carta.webp",
+        alt: { es: "Carta mensual generada con Gemini", en: "Monthly letter generated with Gemini" },
+        label: { es: "Carta mensual", en: "Monthly letter" },
+      },
+    ],
+  },
+  {
+    slug: "dead-echo",
+    title: "Dead Echo",
+    device: "screen",
+    platform: { es: "Videojuego", en: "Video game" },
+    tagline: { es: "Survival horror en primera persona.", en: "First-person survival horror." },
+    description: {
+      es: "Eres Leon y llegas a Valdeoscuro, un pueblo perdido en la niebla donde los aldeanos, los Ganados, vienen a por ti en oleadas. Sobrevives, encuentras documentos, recibes llamadas de Ingrid y hablas con Tomás, un superviviente: así se cuenta el Capítulo 1.",
+      en: "You're Leon, arriving in Valdeoscuro, a fog-bound village where the villagers, the Ganados, come at you in waves. You survive, find documents, get radio calls from Ingrid and talk to Tomás, a survivor: that's how Chapter 1 unfolds.",
+    },
+    highlights: [
+      {
+        es: "NPC con diálogo por IA: Tomás responde con Gemini y voz TTS, con diálogos escritos si no hay conexión.",
+        en: "AI-driven NPC dialogue: Tomás replies with Gemini and a TTS voice, with written lines when offline.",
+      },
+      {
+        es: "Combate completo: 8 tipos de arma, cuchillo con parry que se desgasta y un Tyrant como jefe final.",
+        en: "Full combat: 8 weapon types, a parry knife that wears down and a Tyrant as the final boss.",
+      },
+      {
+        es: "Supervivencia: maletín por cuadrícula, fabricación, mercader con pesetas y guardado con 3 ranuras.",
+        en: "Survival: grid briefcase inventory, crafting, a merchant that trades in pesetas and 3-slot saves.",
+      },
+      {
+        es: "Ambiente: niebla, tormentas, noches con linterna, música a medida y voces en español.",
+        en: "Atmosphere: fog, storms, flashlight nights, a custom score and Spanish voice acting.",
+      },
+    ],
+    tags: ["Unity", "C#", "Gemini"],
+    github: "https://github.com/Vasquezjuan7/Game-type-resident-evil-4",
+    video: "/images/DeadEcho/intro.mp4",
+    images: [
+      {
+        src: "/images/DeadEcho/portada.webp",
+        alt: { es: "Intro de Dead Echo: el expediente de la hija del Presidente", en: "Dead Echo intro: the President's daughter's file" },
+      },
+    ],
+    gallery: [
+      {
+        src: "/images/DeadEcho/menu.webp",
+        alt: { es: "Menú principal de Dead Echo entre la niebla", en: "Dead Echo main menu in the fog" },
+      },
+      {
+        src: "/images/DeadEcho/capitulo.webp",
+        alt: { es: "Capítulo 1: llegada al pueblo de Valdeoscuro", en: "Chapter 1: arriving in Valdeoscuro" },
+      },
+      {
+        src: "/images/DeadEcho/oleada.webp",
+        alt: { es: "Una oleada de aldeanos avanza durante el asedio", en: "A wave of villagers advances during the siege" },
+      },
+    ],
+  },
+];
