@@ -1,0 +1,352 @@
+<!doctype html>
+<html lang="es">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>DevPulse</title>
+<style>
+  /* Layout: wordmark + línea de pulso arriba, luego tres secciones apiladas
+     (qué es / para qué sirve / parte técnica) como una sola ficha de scroll —
+     misma paleta "developer dark mode" de la app real (fondo casi negro + cian),
+     para que la ficha se sienta como una extensión de la propia interfaz. */
+  :root{
+    --bg:#05070B;
+    --surface:#0D1219;
+    --surface-2:#141B24;
+    --line:#1E2731;
+    --text:#F8FAFC;
+    --text-2:#A3B0C2;
+    --text-3:#8592A6;
+    --pulse:#22D3EE;
+    --pulse-soft:#67E8F9;
+    --warn:#FCD34D;
+    --danger:#FDA4AF;
+    --font-display:'Inter',system-ui,sans-serif;
+    --font-body:'Inter',system-ui,sans-serif;
+    --font-mono:'JetBrains Mono',ui-monospace,Consolas,monospace;
+    color-scheme: dark;
+  }
+
+  *{box-sizing:border-box;}
+  body{
+    background:var(--bg);
+    color:var(--text);
+    font-family:var(--font-body);
+    margin:0;
+    padding-left:max(16px, env(safe-area-inset-left,0px));
+    padding-right:max(16px, env(safe-area-inset-right,0px));
+    padding-block:28px 60px;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:760px;margin:0 auto;}
+
+  /* ---------- hero ---------- */
+  .hero{
+    position:relative;
+    padding:36px 28px;
+    border-radius:28px;
+    background:radial-gradient(120% 140% at 20% -10%, #0B3540 0%, var(--surface) 55%, var(--bg) 100%);
+    border:1px solid var(--line);
+    overflow:hidden;
+    margin-bottom:28px;
+  }
+  .hero svg.pulse{
+    position:absolute; right:-30px; top:18px; width:300px; height:110px;
+    opacity:.55; pointer-events:none;
+  }
+  .eyebrow{
+    font-family:var(--font-mono); font-size:11.5px; letter-spacing:.14em; text-transform:uppercase;
+    color:var(--pulse-soft); margin:0 0 14px; position:relative;
+  }
+  h1.name{
+    font-family:var(--font-display); font-weight:700; font-size:clamp(32px,7vw,46px);
+    margin:0 0 10px; letter-spacing:-0.02em; text-wrap:balance; position:relative;
+  }
+  h1.name .accent{color:var(--pulse);}
+  .tagline{
+    font-size:15.5px; color:var(--text-2); max-width:48ch; line-height:1.55; margin:0; position:relative;
+  }
+  .badge-row{display:flex; flex-wrap:wrap; gap:8px; margin-top:20px; position:relative;}
+  .badge{
+    font-family:var(--font-mono); font-size:11px; color:var(--text-2);
+    border:1px solid var(--line); border-radius:999px; padding:5px 12px;
+    background:rgba(255,255,255,.02);
+  }
+
+  /* ---------- sections ---------- */
+  section{margin-top:40px;}
+  .section-head{display:flex; align-items:baseline; gap:12px; margin-bottom:16px;}
+  .section-num{font-family:var(--font-mono); font-size:12px; color:var(--text-3);}
+  h2{
+    font-family:var(--font-display); font-size:20px; font-weight:600; margin:0;
+    letter-spacing:-0.01em;
+  }
+  p.lead{font-size:15px; line-height:1.65; color:var(--text-2); max-width:62ch; margin:0 0 4px;}
+  p.lead strong{color:var(--text); font-weight:600;}
+
+  /* qué es: problem -> solution */
+  .flow{
+    display:grid; grid-template-columns:1fr auto 1fr; gap:16px; align-items:stretch;
+    margin-top:20px;
+  }
+  .flow .arrow{align-self:center; color:var(--text-3); font-size:20px;}
+  .flow-card{
+    background:var(--surface); border:1px solid var(--line); border-radius:16px;
+    padding:18px; min-width:0;
+  }
+  .flow-card .k{font-family:var(--font-mono); font-size:10.5px; letter-spacing:.1em; text-transform:uppercase; color:var(--text-3); margin:0 0 8px;}
+  .flow-card p{margin:0; font-size:13.5px; color:var(--text-2); line-height:1.55;}
+  .flow-card.reactive .k{color:var(--danger);}
+  .flow-card.proactive{border-color:rgba(34,211,238,.35);}
+  .flow-card.proactive .k{color:var(--pulse);}
+
+  @media (max-width:560px){
+    .flow{grid-template-columns:1fr; }
+    .flow .arrow{transform:rotate(90deg); justify-self:center;}
+  }
+
+  /* para qué sirve: capability grid */
+  .cap-grid{display:grid; grid-template-columns:repeat(2,1fr); gap:12px; margin-top:4px;}
+  @media (max-width:560px){.cap-grid{grid-template-columns:1fr;}}
+  .cap{
+    background:var(--surface); border:1px solid var(--line); border-radius:14px;
+    padding:16px; min-width:0;
+  }
+  .cap .icon{
+    width:30px;height:30px;border-radius:9px;display:flex;align-items:center;justify-content:center;
+    background:rgba(34,211,238,.1); color:var(--pulse-soft); margin-bottom:10px; font-size:15px;
+  }
+  .cap h3{font-size:14px; margin:0 0 5px; font-weight:600; font-family:var(--font-body);}
+  .cap p{font-size:12.5px; color:var(--text-2); line-height:1.5; margin:0;}
+
+  /* parte técnica: stack rows */
+  .stack-table{border:1px solid var(--line); border-radius:16px; overflow:hidden; margin-top:4px;}
+  .stack-row{
+    display:grid; grid-template-columns:140px 1fr; gap:16px;
+    padding:14px 18px; border-bottom:1px solid var(--line);
+  }
+  .stack-row:last-child{border-bottom:none;}
+  .stack-row:nth-child(odd){background:rgba(255,255,255,.015);}
+  .stack-row .label{
+    font-family:var(--font-mono); font-size:11px; color:var(--text-3); letter-spacing:.04em; padding-top:2px;
+  }
+  .stack-row .value{font-size:13.5px; color:var(--text); line-height:1.55;}
+  .stack-row .value .sub{color:var(--text-2); font-size:12.5px;}
+  .stack-row code, .decision code{
+    font-family:var(--font-mono); font-size:11.5px; background:var(--surface-2);
+    padding:1px 6px; border-radius:5px; color:var(--pulse-soft);
+  }
+  @media (max-width:560px){
+    .stack-row{grid-template-columns:1fr; gap:4px;}
+  }
+
+  /* fórmula del modelo */
+  .formula{
+    margin-top:16px; padding:16px 18px; border-radius:14px;
+    background:var(--surface); border:1px solid var(--line);
+    font-family:var(--font-mono); font-size:13px; color:var(--text); line-height:1.7;
+    overflow-x:auto;
+  }
+  .formula .muted{color:var(--text-3);}
+  .formula .acc{color:var(--pulse-soft);}
+
+  /* decisiones técnicas: numeradas, decisiones y bugs reales del desarrollo */
+  .decisions{counter-reset:dec; margin-top:20px; display:flex; flex-direction:column; gap:14px;}
+  .decision{
+    display:grid; grid-template-columns:34px 1fr; gap:14px;
+    padding:16px 18px; background:var(--surface); border:1px solid var(--line); border-radius:14px;
+  }
+  .decision::before{
+    counter-increment:dec; content:counter(dec,decimal-leading-zero);
+    font-family:var(--font-mono); font-size:12px; color:var(--pulse); padding-top:1px;
+  }
+  .decision h3{margin:0 0 5px; font-size:13.5px; font-weight:600;}
+  .decision p{margin:0; font-size:12.5px; color:var(--text-2); line-height:1.55;}
+
+  /* privacy strip */
+  .privacy{
+    margin-top:32px; padding:18px 20px; border-radius:16px;
+    border:1px solid rgba(34,211,238,.25); background:rgba(34,211,238,.05);
+    display:flex; gap:14px; align-items:flex-start;
+  }
+  .privacy .mark{color:var(--pulse); font-size:17px; line-height:1;}
+  .privacy p{margin:0; font-size:12.5px; color:var(--text-2); line-height:1.55;}
+  .privacy strong{color:var(--text);}
+
+  footer{
+    margin-top:44px; padding-top:20px; border-top:1px solid var(--line);
+    display:flex; justify-content:space-between; flex-wrap:wrap; gap:10px;
+    font-family:var(--font-mono); font-size:11px; color:var(--text-3);
+  }
+</style>
+
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+<div class="wrap">
+
+  <div class="hero">
+    <svg class="pulse" viewBox="0 0 300 110" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <path d="M0 62 H96 L114 26 L136 96 L156 40 L172 74 L184 62 H300"
+        stroke="#22D3EE" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+    <p class="eyebrow">Electron · React · TypeScript · Tailwind · Machine Learning</p>
+    <h1 class="name">Dev<span class="accent">Pulse</span></h1>
+    <p class="tagline">Dashboard de productividad y bienestar para programadores que detecta la fatiga mental mientras trabajas y simplifica la pantalla antes de que el cansancio te gane.</p>
+    <div class="badge-row">
+      <span class="badge">IA entrenada en tu equipo</span>
+      <span class="badge">Retícula adaptativa 4 → 2 columnas</span>
+      <span class="badge">Modo claro y oscuro · WCAG AA</span>
+      <span class="badge">100% datos locales</span>
+    </div>
+  </div>
+
+  <section>
+    <div class="section-head"><span class="section-num">01</span><h2>Qué es</h2></div>
+    <p class="lead">Los dashboards de productividad muestran <strong>siempre la misma cantidad de información</strong>, estés fresco o agotado, y la fatiga se nota cuando ya es tarde. DevPulse es una app de escritorio para Windows que invierte ese orden: mide tu actividad real y adapta la interfaz a tu carga mental.</p>
+    <div class="flow">
+      <div class="flow-card reactive">
+        <p class="k">Antes</p>
+        <p>Llevas horas sin pausa → saltas entre Slack, el navegador y el editor → la pantalla sigue llena de métricas → te das cuenta del cansancio cuando ya cometes errores.</p>
+      </div>
+      <div class="arrow">→</div>
+      <div class="flow-card proactive">
+        <p class="k">DevPulse</p>
+        <p>Detecta la fatiga por tu actividad → al pasar de 70/100 oculta lo secundario y deja solo temporizador y notas → cierra las apps que distraen.</p>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="section-head"><span class="section-num">02</span><h2>Para qué sirve</h2></div>
+    <div class="cap-grid">
+      <div class="cap">
+        <div class="icon">∿</div>
+        <h3>Carga mental en vivo</h3>
+        <p>Un índice de 0 a 100 cada 2 segundos, calculado con 4 señales reales: saltos entre apps, tiempo sin pausa, correcciones al teclear y ritmo de tecleo.</p>
+      </div>
+      <div class="cap">
+        <div class="icon">✦</div>
+        <h3>IA que aprende de ti</h3>
+        <p>Cada 25 minutos pregunta "¿cómo te sientes?" (1 a 5) y reentrena un modelo propio. Muestra qué ha aprendido: el peso de cada señal y cuánto bajó el error.</p>
+      </div>
+      <div class="cap">
+        <div class="icon">▦</div>
+        <h3>Interfaz adaptativa</h3>
+        <p>Vista densa de 4 columnas, equilibrada de 3 o "Enfoque Absoluto" de 2, según la carga. Se puede fijar a mano en cualquier momento.</p>
+      </div>
+      <div class="cap">
+        <div class="icon">⛨</div>
+        <h3>Bloqueador de contexto</h3>
+        <p>Cierra Slack, Discord, WhatsApp o cualquier programa que añadas. Primero les pide cerrarse para que guarden lo pendiente; si siguen abiertos, los fuerza.</p>
+      </div>
+      <div class="cap">
+        <div class="icon">◷</div>
+        <h3>Pomodoro y mapa de calor</h3>
+        <p>Temporizador con tareas divididas en pasos y cola de pendientes. Cada minuto de enfoque alimenta un mapa de 7 días × 24 horas que muestra cuándo rindes mejor.</p>
+      </div>
+      <div class="cap">
+        <div class="icon">⌂</div>
+        <h3>Cuentas, ajustes y tutorial</h3>
+        <p>Cuentas locales con datos y modelo propios, ajustes de tema y duraciones, y un tutorial guiado que ilumina cada sección y explica para qué sirve.</p>
+      </div>
+      <div class="cap">
+        <div class="icon">◐</div>
+        <h3>Accesible en los dos temas</h3>
+        <p>Modo claro y oscuro con contraste AA, uso completo con teclado, botón "Deshacer" en acciones destructivas y respeto a "reducir movimiento" del sistema.</p>
+      </div>
+      <div class="cap">
+        <div class="icon">!</div>
+        <h3>Errores humanizados</h3>
+        <p>Todo aviso del sistema explica qué pasó, por qué, y qué hacer ahora — nunca un código de error crudo.</p>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="section-head"><span class="section-num">03</span><h2>Parte técnica</h2></div>
+    <div class="stack-table">
+      <div class="stack-row">
+        <div class="label">Plataforma</div>
+        <div class="value">App de escritorio para <strong>Windows</strong> con Electron 45, empaquetada con <code>electron-builder</code> en un instalador NSIS (<code>DevPulse.exe</code>)</div>
+      </div>
+      <div class="stack-row">
+        <div class="label">Interfaz</div>
+        <div class="value">React 19 + TypeScript 5.8, compilado con Vite 6</div>
+      </div>
+      <div class="stack-row">
+        <div class="label">Diseño</div>
+        <div class="value">Tailwind CSS 4 con <strong>tokens de color semánticos</strong> que cambian por tema; el cambio de retícula se anima con la <code>View Transitions API</code> <span class="sub">(sin librerías de animación)</span></div>
+      </div>
+      <div class="stack-row">
+        <div class="label">Señales del PC</div>
+        <div class="value"><code>koffi</code> lee la ventana activa con la API de Windows · <code>uiohook-napi</code> mide el ritmo de tecleo · <code>powerMonitor</code> de Electron detecta la inactividad</div>
+      </div>
+      <div class="stack-row">
+        <div class="label">IA</div>
+        <div class="value">Regresión logística propia en JavaScript, entrenada en el equipo por descenso de gradiente (1.500 iteraciones, ~100 ms) <span class="sub">— sin servicios externos ni librerías de ML</span></div>
+      </div>
+      <div class="stack-row">
+        <div class="label">Cuentas</div>
+        <div class="value">Locales: contraseña con hash <code>scrypt</code> + sal y comparación en tiempo constante; un archivo de datos por cuenta</div>
+      </div>
+      <div class="stack-row">
+        <div class="label">Persistencia</div>
+        <div class="value">JSON en <code>%APPDATA%\DevPulse</code> con escritura atómica (archivo temporal + renombrado), para no corromper datos si la app se cierra a mitad de guardar</div>
+      </div>
+      <div class="stack-row">
+        <div class="label">Accesibilidad</div>
+        <div class="value">WCAG 2.1 AA verificado con un script: 120 combinaciones de texto y fondo en los dos temas, <strong>mínimo 4,70:1</strong> <span class="sub">(la norma pide 4,5:1)</span></div>
+      </div>
+    </div>
+
+    <div class="formula">
+      <span class="muted">// modelo personal de fatiga</span><br>
+      p(fatiga) = σ(<span class="acc">b</span> + <span class="acc">w₁</span>·saltos + <span class="acc">w₂</span>·sin_pausa + <span class="acc">w₃</span>·correcciones + <span class="acc">w₄</span>·ritmo)<br>
+      <span class="muted">// regularización L2 hacia los pesos iniciales, fuerza = 0,3 / (n + 2)</span>
+    </div>
+
+    <div class="decisions">
+      <div class="decision">
+        <div>
+          <h3>Regresión logística, no una red neuronal</h3>
+          <p>Cada usuario aporta pocas decenas de respuestas y hace falta explicar la predicción. Con 4 entradas, una red neuronal sobreajustaría y sería una caja negra; la logística da pesos que se pueden mostrar en pantalla. En una prueba con 20 respuestas, el error medio bajó de 21 a 11 puntos.</p>
+        </div>
+      </div>
+      <div class="decision">
+        <div>
+          <h3>Umbrales con histéresis para que la pantalla no parpadee</h3>
+          <p>La interfaz entra en Enfoque Absoluto al pasar de 70, pero no vuelve hasta bajar de 58. Con un solo umbral, una carga que ronda el límite haría saltar la retícula cada 2 segundos.</p>
+        </div>
+      </div>
+      <div class="decision">
+        <div>
+          <h3>La barra superior se movía con cada cambio de carga</h3>
+          <p>Detectado usando la app: el subtítulo cambiaba de largo con cada vista y empujaba los controles. Se resolvió con una retícula de 3 columnas fijas y anchos fijos para cada número, verificado midiendo las posiciones en todos los estados.</p>
+        </div>
+      </div>
+      <div class="decision">
+        <div>
+          <h3>El contraste se midió, no se eligió a ojo</h3>
+          <p>Al añadir el modo claro, el script de contraste encontró 7 combinaciones por debajo de 4,5:1, sobre todo textos naranjas sobre fondos tintados. Se oscurecieron esos tokens y se añadió uno específico para bordes de controles (≥ 3:1).</p>
+        </div>
+      </div>
+      <div class="decision">
+        <div>
+          <h3>Del teclado solo se guarda <em>cuándo</em>, nunca <em>qué</em></h3>
+          <p>El gancho global de teclado registra la hora de cada pulsación y si fue <code>Retroceso</code> o <code>Suprimir</code>. Con eso basta para medir ritmo y correcciones sin capturar nada de lo que se escribe.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="privacy">
+      <div class="mark">●</div>
+      <p><strong>Privacidad por diseño:</strong> todo se calcula y se guarda en el equipo del usuario; DevPulse no envía nada a ningún servidor ni a ninguna API externa. Sin sesión iniciada no se mide nada. El índice de carga es una estimación para adaptar la interfaz, no un diagnóstico médico.</p>
+    </div>
+  </section>
+
+  <footer>
+    <span>DevPulse — proyecto de Interfaces</span>
+    <span>Electron · React · TypeScript · Tailwind</span>
+  </footer>
+
+</div>
