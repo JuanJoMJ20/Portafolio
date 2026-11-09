@@ -1,0 +1,316 @@
+<!doctype html>
+<html lang="es">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CalmWrist</title>
+<style>
+  /* Layout: wordmark + breathing-wave motif up top, then three stacked
+     sections (qué es / para qué sirve / parte técnica) as a single
+     scrolling spec sheet — same dark-only palette as the real watch UI,
+     since the app itself never renders in light mode. */
+  :root{
+    --bg:#050607;
+    --surface:#14181C;
+    --surface-2:#1B2124;
+    --line:#242B30;
+    --text:#F5F7F8;
+    --text-2:#A7B0B8;
+    --text-3:#6B747B;
+    --calm:#63E6CB;
+    --elevated:#FFD166;
+    --crisis:#FFB020;
+    --danger:#FF6B57;
+    --font-display:'Space Grotesk',system-ui,sans-serif;
+    --font-body:'Inter',system-ui,sans-serif;
+    --font-mono:'JetBrains Mono',ui-monospace,Consolas,monospace;
+    color-scheme: dark;
+  }
+
+  *{box-sizing:border-box;}
+  body{
+    background:var(--bg);
+    color:var(--text);
+    font-family:var(--font-body);
+    margin:0;
+    padding-left:max(16px, env(safe-area-inset-left,0px));
+    padding-right:max(16px, env(safe-area-inset-right,0px));
+    padding-block:28px 60px;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:760px;margin:0 auto;}
+
+  /* ---------- hero ---------- */
+  .hero{
+    position:relative;
+    padding:36px 28px;
+    border-radius:28px;
+    background:radial-gradient(120% 140% at 20% -10%, #0F3A32 0%, var(--surface) 55%, var(--bg) 100%);
+    border:1px solid var(--line);
+    overflow:hidden;
+    margin-bottom:28px;
+  }
+  .hero svg.wave{
+    position:absolute; right:-40px; top:-30px; width:260px; height:260px;
+    opacity:.5; pointer-events:none;
+  }
+  .eyebrow{
+    font-family:var(--font-mono); font-size:11.5px; letter-spacing:.14em; text-transform:uppercase;
+    color:var(--calm); margin:0 0 14px;
+  }
+  h1.name{
+    font-family:var(--font-display); font-weight:700; font-size:clamp(32px,7vw,46px);
+    margin:0 0 10px; letter-spacing:-0.01em; text-wrap:balance;
+  }
+  .tagline{
+    font-size:15.5px; color:var(--text-2); max-width:46ch; line-height:1.5; margin:0;
+  }
+  .badge-row{display:flex; flex-wrap:wrap; gap:8px; margin-top:20px;}
+  .badge{
+    font-family:var(--font-mono); font-size:11px; color:var(--text-2);
+    border:1px solid var(--line); border-radius:999px; padding:5px 12px;
+    background:rgba(255,255,255,.02);
+  }
+
+  /* ---------- sections ---------- */
+  section{margin-top:40px;}
+  .section-head{display:flex; align-items:baseline; gap:12px; margin-bottom:16px;}
+  .section-num{font-family:var(--font-mono); font-size:12px; color:var(--text-3);}
+  h2{
+    font-family:var(--font-display); font-size:20px; font-weight:600; margin:0;
+    letter-spacing:-0.01em;
+  }
+  p.lead{font-size:15px; line-height:1.65; color:var(--text-2); max-width:62ch; margin:0 0 4px;}
+  p.lead strong{color:var(--text); font-weight:600;}
+
+  /* qué es: problem -> solution */
+  .flow{
+    display:grid; grid-template-columns:1fr auto 1fr; gap:16px; align-items:stretch;
+    margin-top:20px;
+  }
+  .flow .arrow{align-self:center; color:var(--text-3); font-size:20px;}
+  .flow-card{
+    background:var(--surface); border:1px solid var(--line); border-radius:16px;
+    padding:18px; min-width:0;
+  }
+  .flow-card .k{font-family:var(--font-mono); font-size:10.5px; letter-spacing:.1em; text-transform:uppercase; color:var(--text-3); margin:0 0 8px;}
+  .flow-card p{margin:0; font-size:13.5px; color:var(--text-2); line-height:1.55;}
+  .flow-card.reactive .k{color:var(--danger);}
+  .flow-card.proactive{border-color:rgba(99,230,203,.35);}
+  .flow-card.proactive .k{color:var(--calm);}
+
+  @media (max-width:560px){
+    .flow{grid-template-columns:1fr; }
+    .flow .arrow{transform:rotate(90deg); justify-self:center;}
+  }
+
+  /* para qué sirve: capability grid */
+  .cap-grid{display:grid; grid-template-columns:repeat(2,1fr); gap:12px; margin-top:4px;}
+  @media (max-width:560px){.cap-grid{grid-template-columns:1fr;}}
+  .cap{
+    background:var(--surface); border:1px solid var(--line); border-radius:14px;
+    padding:16px; min-width:0;
+  }
+  .cap .icon{
+    width:30px;height:30px;border-radius:9px;display:flex;align-items:center;justify-content:center;
+    background:var(--surface-2); margin-bottom:10px; font-size:15px;
+  }
+  .cap h3{font-size:14px; margin:0 0 5px; font-weight:600; font-family:var(--font-body);}
+  .cap p{font-size:12.5px; color:var(--text-2); line-height:1.5; margin:0;}
+
+  /* parte técnica: stack rows */
+  .stack-table{border:1px solid var(--line); border-radius:16px; overflow:hidden; margin-top:4px;}
+  .stack-row{
+    display:grid; grid-template-columns:140px 1fr; gap:16px;
+    padding:14px 18px; border-bottom:1px solid var(--line);
+  }
+  .stack-row:last-child{border-bottom:none;}
+  .stack-row:nth-child(odd){background:rgba(255,255,255,.015);}
+  .stack-row .label{
+    font-family:var(--font-mono); font-size:11px; color:var(--text-3); letter-spacing:.04em; padding-top:2px;
+  }
+  .stack-row .value{font-size:13.5px; color:var(--text); line-height:1.55;}
+  .stack-row .value .sub{color:var(--text-2); font-size:12.5px;}
+  @media (max-width:560px){
+    .stack-row{grid-template-columns:1fr; gap:4px;}
+  }
+
+  /* decisiones técnicas: numbered, since they're a real sequence of
+     problems hit and fixed during the build */
+  .decisions{counter-reset:dec; margin-top:20px; display:flex; flex-direction:column; gap:14px;}
+  .decision{
+    display:grid; grid-template-columns:34px 1fr; gap:14px;
+    padding:16px 18px; background:var(--surface); border:1px solid var(--line); border-radius:14px;
+  }
+  .decision::before{
+    counter-increment:dec; content:counter(dec,decimal-leading-zero);
+    font-family:var(--font-mono); font-size:12px; color:var(--calm); padding-top:1px;
+  }
+  .decision h3{margin:0 0 5px; font-size:13.5px; font-weight:600;}
+  .decision p{margin:0; font-size:12.5px; color:var(--text-2); line-height:1.55;}
+  .decision code{
+    font-family:var(--font-mono); font-size:11.5px; background:var(--surface-2);
+    padding:1px 6px; border-radius:5px; color:var(--calm);
+  }
+
+  /* privacy strip */
+  .privacy{
+    margin-top:32px; padding:18px 20px; border-radius:16px;
+    border:1px solid rgba(99,230,203,.25); background:rgba(99,230,203,.05);
+    display:flex; gap:14px; align-items:flex-start;
+  }
+  .privacy .mark{color:var(--calm); font-size:17px; line-height:1;}
+  .privacy p{margin:0; font-size:12.5px; color:var(--text-2); line-height:1.55;}
+  .privacy strong{color:var(--text);}
+
+  footer{
+    margin-top:44px; padding-top:20px; border-top:1px solid var(--line);
+    display:flex; justify-content:space-between; flex-wrap:wrap; gap:10px;
+    font-family:var(--font-mono); font-size:11px; color:var(--text-3);
+  }
+</style>
+
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+<div class="wrap">
+
+  <div class="hero">
+    <svg class="wave" viewBox="0 0 108 108" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M20,62 C28,42 40,42 48,58 C56,74 68,74 76,56 C80,48 84,44 88,40"
+        stroke="#63E6CB" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+    <p class="eyebrow">Wear OS · Kotlin · Jetpack Compose · Gemini AI</p>
+    <h1 class="name">CalmWrist</h1>
+    <p class="tagline">Intervención proactiva en crisis de ansiedad, directo en la muñeca: detecta el pulso subiendo antes de que la persona tenga que pedir ayuda, y guía de vuelta a la calma sin que haga falta tocar nada.</p>
+    <div class="badge-row">
+      <span class="badge">Health Services · HR sensor</span>
+      <span class="badge">Respiración 4-7-8 háptica</span>
+      <span class="badge">gemini-flash-lite-latest</span>
+      <span class="badge">100% datos locales</span>
+    </div>
+  </div>
+
+  <section>
+    <div class="section-head"><span class="section-num">01</span><h2>Qué es</h2></div>
+    <p class="lead">Las apps de bienestar actuales son <strong>reactivas</strong>: hay que abrirlas y pedir ayuda ya en crisis, el momento en que menos capacidad de decisión queda. CalmWrist invierte el orden.</p>
+    <div class="flow">
+      <div class="flow-card reactive">
+        <p class="k">Antes</p>
+        <p>La persona nota que está mal → busca el teléfono → abre una app → elige un ejercicio.</p>
+      </div>
+      <div class="arrow">→</div>
+      <div class="flow-card proactive">
+        <p class="k">CalmWrist</p>
+        <p>El reloj lee el pulso en segundo plano → detecta la subida → arranca la respiración guiada solo, sin interacción.</p>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="section-head"><span class="section-num">02</span><h2>Para qué sirve</h2></div>
+    <div class="cap-grid">
+      <div class="cap">
+        <div class="icon">♥</div>
+        <h3>Detección biométrica</h3>
+        <p>Lee el pulso real del reloj y calcula una línea base personal en reposo, para no confundir actividad física con ansiedad.</p>
+      </div>
+      <div class="cap">
+        <div class="icon">〜</div>
+        <h3>Respiración háptica 4-7-8</h3>
+        <p>Inhalar 4s / sostener 7s / exhalar 8s, con vibraciones distintas por fase para seguirla sin mirar la pantalla.</p>
+      </div>
+      <div class="cap">
+        <div class="icon">✦</div>
+        <h3>Cápsula personal con IA</h3>
+        <p>Una entrevista de 3 preguntas por voz, una sola vez, que Gemini convierte en el mensaje de contención que se usa en cada crisis.</p>
+      </div>
+      <div class="cap">
+        <div class="icon">✉</div>
+        <h3>Carta mensual reflexiva</h3>
+        <p>Gemini redacta un resumen cálido del mes a partir de los episodios resueltos — nunca de datos biométricos crudos.</p>
+      </div>
+      <div class="cap">
+        <div class="icon">↗</div>
+        <h3>Historial y tendencia</h3>
+        <p>Cantidad de episodios, duración promedio, si están mejorando o empeorando, y en qué franja horaria ocurren más.</p>
+      </div>
+      <div class="cap">
+        <div class="icon">!</div>
+        <h3>Errores humanizados</h3>
+        <p>Todo aviso del sistema explica qué pasó, por qué, y qué hacer ahora — nunca un código de error crudo.</p>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="section-head"><span class="section-num">03</span><h2>Parte técnica</h2></div>
+    <div class="stack-table">
+      <div class="stack-row">
+        <div class="label">Plataforma</div>
+        <div class="value">Android nativo para <strong>Wear OS</strong>, standalone (funciona sin teléfono emparejado)</div>
+      </div>
+      <div class="stack-row">
+        <div class="label">Lenguaje / UI</div>
+        <div class="value">Kotlin + Jetpack Compose for Wear OS <span class="sub">(androidx.wear.compose.material / foundation)</span></div>
+      </div>
+      <div class="stack-row">
+        <div class="label">Arquitectura</div>
+        <div class="value">MVVM — <code>AndroidViewModel</code> + <code>StateFlow</code>, un único ViewModel como fuente de verdad</div>
+      </div>
+      <div class="stack-row">
+        <div class="label">Sensor</div>
+        <div class="value">Health Services, <code>DataType.HEART_RATE_BPM</code> en vivo → línea base por media móvil exponencial → bandas CALM / ELEVATED (+20bpm) / CRISIS (+35bpm)</div>
+      </div>
+      <div class="stack-row">
+        <div class="label">IA generativa</div>
+        <div class="value"><code>gemini-flash-lite-latest</code>, tier gratuito — se usa exactamente 2 veces: cápsula (onboarding, una vez) y carta mensual. <span class="sub">Nunca genera el mensaje de resolución de crisis: ese es fijo a propósito.</span></div>
+      </div>
+      <div class="stack-row">
+        <div class="label">Persistencia</div>
+        <div class="value"><code>SharedPreferences</code> local — cápsula, historial e IA quedan en el reloj, no en la nube</div>
+      </div>
+      <div class="stack-row">
+        <div class="label">Demo / QA</div>
+        <div class="value"><code>BroadcastReceiver</code> de depuración (solo build debug) + panel web en Node.js sin dependencias, puerto 4545</div>
+      </div>
+    </div>
+
+    <div class="decisions">
+      <div class="decision">
+        <div>
+          <h3>El mensaje de resolución de crisis no lo escribe la IA</h3>
+          <p>Es el momento más sensible del flujo, así que es texto fijo y curado (<code>postCrisisAffirmation</code>) en vez de una generación que podría salir mal justo ahí.</p>
+        </div>
+      </div>
+      <div class="decision">
+        <div>
+          <h3>Pantalla redonda: el contenido real corta contra el cristal curvo</h3>
+          <p>Un padding que se ve bien en rectángulo se corta en los bordes de un reloj circular — se resolvió a prueba y error contra el dispositivo físico, no contra un emulador.</p>
+        </div>
+      </div>
+      <div class="decision">
+        <div>
+          <h3><code>Arrangement.Center</code> + scroll deja contenido inalcanzable</h3>
+          <p>Con texto largo generado por IA (la carta mensual varía de tamaño), centrar el contenido de una Column con scroll corta el texto sin forma de llegar al resto. La solución documentada es siempre <code>Arrangement.Top</code>.</p>
+        </div>
+      </div>
+      <div class="decision">
+        <div>
+          <h3>Scroll con la corona física, no solo con el dedo</h3>
+          <p><code>Modifier.rotaryScrollable</code> de Wear Compose Foundation, para que girar el bisel también baje el texto largo.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="privacy">
+      <div class="mark">●</div>
+      <p><strong>Privacidad por diseño:</strong> el pulso crudo nunca sale del reloj. Lo único que viaja a la API de Gemini son números agregados (duración, cantidad, franja horaria) para escribir la carta — nunca biometría en bruto. CalmWrist no reemplaza atención profesional; eso se dice explícito en el onboarding, una vez, antes de empezar.</p>
+    </div>
+  </section>
+
+  <footer>
+    <span>CalmWrist — proyecto de Interfaces</span>
+    <span>Kotlin · Compose · Gemini</span>
+  </footer>
+
+</div>
