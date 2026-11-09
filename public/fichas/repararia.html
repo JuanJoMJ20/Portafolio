@@ -1,0 +1,317 @@
+<!doctype html>
+<html lang="es">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>RepararIA</title>
+<style>
+  /* Layout: wordmark + ícono de app arriba, luego tres secciones apiladas
+     (qué es / para qué sirve / parte técnica) como una sola ficha de scroll —
+     mismo sistema de color claro de la app real (azul + fondo gris muy claro),
+     para que la ficha se sienta como una extensión de la propia interfaz. */
+  :root{
+    --bg:#F2F2F5;
+    --surface:#FFFFFF;
+    --surface-2:#F7F8FA;
+    --line:#E4E4E7;
+    --text:#18181B;
+    --text-2:#52525B;
+    --text-3:#71717A;
+    --primary:#1E6BFF;
+    --primary-dark:#154FC2;
+    --success:#34C759;
+    --critical:#FB2C36;
+    --font-display:'Inter',system-ui,sans-serif;
+    --font-body:'Inter',system-ui,sans-serif;
+    --font-mono:'JetBrains Mono',ui-monospace,Consolas,monospace;
+    color-scheme: light;
+  }
+
+  *{box-sizing:border-box;}
+  body{
+    background:var(--bg);
+    color:var(--text);
+    font-family:var(--font-body);
+    margin:0;
+    padding-left:max(16px, env(safe-area-inset-left,0px));
+    padding-right:max(16px, env(safe-area-inset-right,0px));
+    padding-block:28px 60px;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:760px;margin:0 auto;}
+
+  /* ---------- hero ---------- */
+  .hero{
+    position:relative;
+    padding:36px 28px;
+    border-radius:28px;
+    background:radial-gradient(120% 140% at 20% -10%, #E8F0FE 0%, var(--surface) 55%, var(--surface) 100%);
+    border:1px solid var(--line);
+    overflow:hidden;
+    margin-bottom:28px;
+    box-shadow:0 20px 40px -24px rgba(30,107,255,.25);
+  }
+  .hero svg.blob{
+    position:absolute; right:-50px; top:-50px; width:220px; height:220px;
+    opacity:.55; pointer-events:none;
+  }
+  .eyebrow{
+    font-family:var(--font-mono); font-size:11.5px; letter-spacing:.14em; text-transform:uppercase;
+    color:var(--primary); margin:0 0 14px;
+  }
+  h1.name{
+    font-family:var(--font-display); font-weight:800; font-size:clamp(32px,7vw,46px);
+    margin:0 0 10px; letter-spacing:-0.01em; text-wrap:balance;
+  }
+  h1.name .accent{color:var(--primary);}
+  .tagline{
+    font-size:15.5px; color:var(--text-2); max-width:48ch; line-height:1.55; margin:0;
+  }
+  .badge-row{display:flex; flex-wrap:wrap; gap:8px; margin-top:20px;}
+  .badge{
+    font-family:var(--font-mono); font-size:11px; color:var(--text-2);
+    border:1px solid var(--line); border-radius:999px; padding:5px 12px;
+    background:rgba(255,255,255,.6);
+  }
+
+  /* ---------- sections ---------- */
+  section{margin-top:40px;}
+  .section-head{display:flex; align-items:baseline; gap:12px; margin-bottom:16px;}
+  .section-num{font-family:var(--font-mono); font-size:12px; color:var(--text-3);}
+  h2{
+    font-family:var(--font-display); font-size:20px; font-weight:700; margin:0;
+    letter-spacing:-0.01em;
+  }
+  p.lead{font-size:15px; line-height:1.65; color:var(--text-2); max-width:62ch; margin:0 0 4px;}
+  p.lead strong{color:var(--text); font-weight:700;}
+
+  /* qué es: problem -> solution */
+  .flow{
+    display:grid; grid-template-columns:1fr auto 1fr; gap:16px; align-items:stretch;
+    margin-top:20px;
+  }
+  .flow .arrow{align-self:center; color:var(--text-3); font-size:20px;}
+  .flow-card{
+    background:var(--surface); border:1px solid var(--line); border-radius:16px;
+    padding:18px; min-width:0;
+  }
+  .flow-card .k{font-family:var(--font-mono); font-size:10.5px; letter-spacing:.1em; text-transform:uppercase; color:var(--text-3); margin:0 0 8px;}
+  .flow-card p{margin:0; font-size:13.5px; color:var(--text-2); line-height:1.55;}
+  .flow-card.reactive .k{color:var(--critical);}
+  .flow-card.proactive{border-color:rgba(30,107,255,.35); background:#F5F9FF;}
+  .flow-card.proactive .k{color:var(--primary);}
+
+  @media (max-width:560px){
+    .flow{grid-template-columns:1fr; }
+    .flow .arrow{transform:rotate(90deg); justify-self:center;}
+  }
+
+  /* para qué sirve: capability grid */
+  .cap-grid{display:grid; grid-template-columns:repeat(2,1fr); gap:12px; margin-top:4px;}
+  @media (max-width:560px){.cap-grid{grid-template-columns:1fr;}}
+  .cap{
+    background:var(--surface); border:1px solid var(--line); border-radius:14px;
+    padding:16px; min-width:0;
+  }
+  .cap .icon{
+    width:30px;height:30px;border-radius:9px;display:flex;align-items:center;justify-content:center;
+    background:#E8F0FE; color:var(--primary); margin-bottom:10px; font-size:15px;
+  }
+  .cap h3{font-size:14px; margin:0 0 5px; font-weight:700; font-family:var(--font-body);}
+  .cap p{font-size:12.5px; color:var(--text-2); line-height:1.5; margin:0;}
+
+  /* parte técnica: stack rows */
+  .stack-table{border:1px solid var(--line); border-radius:16px; overflow:hidden; margin-top:4px; background:var(--surface);}
+  .stack-row{
+    display:grid; grid-template-columns:140px 1fr; gap:16px;
+    padding:14px 18px; border-bottom:1px solid var(--line);
+  }
+  .stack-row:last-child{border-bottom:none;}
+  .stack-row:nth-child(odd){background:var(--surface-2);}
+  .stack-row .label{
+    font-family:var(--font-mono); font-size:11px; color:var(--text-3); letter-spacing:.04em; padding-top:2px;
+  }
+  .stack-row .value{font-size:13.5px; color:var(--text); line-height:1.55;}
+  .stack-row .value .sub{color:var(--text-2); font-size:12.5px;}
+  @media (max-width:560px){
+    .stack-row{grid-template-columns:1fr; gap:4px;}
+  }
+
+  /* decisiones técnicas: numbered, bugs reales encontrados y resueltos */
+  .decisions{counter-reset:dec; margin-top:20px; display:flex; flex-direction:column; gap:14px;}
+  .decision{
+    display:grid; grid-template-columns:34px 1fr; gap:14px;
+    padding:16px 18px; background:var(--surface); border:1px solid var(--line); border-radius:14px;
+  }
+  .decision::before{
+    counter-increment:dec; content:counter(dec,decimal-leading-zero);
+    font-family:var(--font-mono); font-size:12px; color:var(--primary); padding-top:1px;
+  }
+  .decision h3{margin:0 0 5px; font-size:13.5px; font-weight:700;}
+  .decision p{margin:0; font-size:12.5px; color:var(--text-2); line-height:1.55;}
+  .decision code{
+    font-family:var(--font-mono); font-size:11.5px; background:var(--surface-2);
+    padding:1px 6px; border-radius:5px; color:var(--primary-dark);
+  }
+
+  /* privacy strip */
+  .privacy{
+    margin-top:32px; padding:18px 20px; border-radius:16px;
+    border:1px solid rgba(30,107,255,.25); background:#F0F5FF;
+    display:flex; gap:14px; align-items:flex-start;
+  }
+  .privacy .mark{color:var(--primary); font-size:17px; line-height:1;}
+  .privacy p{margin:0; font-size:12.5px; color:var(--text-2); line-height:1.55;}
+  .privacy strong{color:var(--text);}
+
+  footer{
+    margin-top:44px; padding-top:20px; border-top:1px solid var(--line);
+    display:flex; justify-content:space-between; flex-wrap:wrap; gap:10px;
+    font-family:var(--font-mono); font-size:11px; color:var(--text-3);
+  }
+</style>
+
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+<div class="wrap">
+
+  <div class="hero">
+    <svg class="blob" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="100" cy="100" r="90" fill="#1E6BFF" fill-opacity="0.12"/>
+      <circle cx="100" cy="100" r="58" fill="#1E6BFF" fill-opacity="0.18"/>
+    </svg>
+    <p class="eyebrow">React Native · Expo · Supabase · Gemini AI</p>
+    <h1 class="name">Reparar<span class="accent">IA</span></h1>
+    <p class="tagline">Diagnóstico de fallas del hogar con IA real, por foto o por voz: te dice qué pasa, si lo puedes arreglar tú mismo, o te manda derecho a pedir un técnico si es peligroso.</p>
+    <div class="badge-row">
+      <span class="badge">IA real: foto y voz</span>
+      <span class="badge">Modo crítico automático</span>
+      <span class="badge">Login + historial en la nube</span>
+      <span class="badge">100% en español</span>
+    </div>
+  </div>
+
+  <section>
+    <div class="section-head"><span class="section-num">01</span><h2>Qué es</h2></div>
+    <p class="lead">Cuando algo se daña en casa, lo normal es <strong>buscar en internet</strong> un tutorial genérico sin saber si el problema es seguro de tocar o no. RepararIA invierte ese orden: analiza tu caso primero.</p>
+    <div class="flow">
+      <div class="flow-card reactive">
+        <p class="k">Antes</p>
+        <p>Algo falla → buscas en YouTube un tutorial que no es tu caso → no sabes si es peligroso → lo intentas a ciegas.</p>
+      </div>
+      <div class="arrow">→</div>
+      <div class="flow-card proactive">
+        <p class="k">RepararIA</p>
+        <p>Apuntas la cámara o describes el problema con tu voz → la IA diagnostica tu caso puntual → pasos claros, o alerta si hay riesgo real.</p>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="section-head"><span class="section-num">02</span><h2>Para qué sirve</h2></div>
+    <div class="cap-grid">
+      <div class="cap">
+        <div class="icon">📷</div>
+        <h3>Diagnóstico por foto</h3>
+        <p>Gemini analiza la imagen de la falla y responde en un JSON con la misma forma que usa toda la interfaz — no es un mock.</p>
+      </div>
+      <div class="cap">
+        <div class="icon">🎙️</div>
+        <h3>Diagnóstico por voz</h3>
+        <p>Grabas tu descripción hablada del problema y Gemini la transcribe y diagnostica — en vez de fingir que "escucha" la falla mecánica.</p>
+      </div>
+      <div class="cap">
+        <div class="icon">⚡</div>
+        <h3>Modo crítico automático</h3>
+        <p>Si hay riesgo real (eléctrico, incendio, gas), la interfaz entera cambia de tono — colores, botones, tab bar — sin recargar nada.</p>
+      </div>
+      <div class="cap">
+        <div class="icon">🗂️</div>
+        <h3>Historial persistente</h3>
+        <p>Cada diagnóstico resuelto queda guardado en tu cuenta (Supabase), con opción de revisarlo o borrarlo cuando quieras.</p>
+      </div>
+      <div class="cap">
+        <div class="icon">🔧</div>
+        <h3>Pedir un técnico</h3>
+        <p>Flujo de solicitud con mapa estilizado y confirmación — simulado a propósito, no hay despacho real todavía.</p>
+      </div>
+      <div class="cap">
+        <div class="icon">!</div>
+        <h3>Errores humanizados</h3>
+        <p>Todo aviso del sistema explica qué pasó, por qué, y qué hacer ahora — nunca un código de error crudo.</p>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="section-head"><span class="section-num">03</span><h2>Parte técnica</h2></div>
+    <div class="stack-table">
+      <div class="stack-row">
+        <div class="label">Plataforma</div>
+        <div class="value">React Native + <strong>Expo</strong> (SDK 58) — Android e iOS desde un solo código, compilado a APK con <code>EAS Build</code></div>
+      </div>
+      <div class="stack-row">
+        <div class="label">Navegación</div>
+        <div class="value">React Navigation — <code>native-stack</code> para auth/modal de error, <code>bottom-tabs</code> con barra flotante tipo glass hecha a medida</div>
+      </div>
+      <div class="stack-row">
+        <div class="label">Backend</div>
+        <div class="value">Supabase — Auth (login/registro/recuperar contraseña) + Postgres con <strong>Row Level Security</strong> por usuario en <code>history</code> y <code>maintenance_reminders</code></div>
+      </div>
+      <div class="stack-row">
+        <div class="label">IA generativa</div>
+        <div class="value"><code>gemini-3.5-flash-lite</code> con fallback a <code>gemini-3.1-flash-lite</code> — visión para fotos, comprensión de audio para voz, salida JSON forzada por schema <span class="sub">(mismo contrato para ambos casos)</span></div>
+      </div>
+      <div class="stack-row">
+        <div class="label">Captura</div>
+        <div class="value"><code>expo-camera</code> (vista en vivo + congelado al disparar) y <code>expo-audio</code> con <em>metering</em> en vivo para un visualizador de voz reactivo de verdad</div>
+      </div>
+      <div class="stack-row">
+        <div class="label">Diseño</div>
+        <div class="value">Sistema propio con tokens de color, <code>expo-linear-gradient</code>, <code>expo-blur</code>, animaciones con <code>Animated</code> (scan-line, pulso, stagger-in) y <code>lucide-react-native</code> para íconos</div>
+      </div>
+      <div class="stack-row">
+        <div class="label">Onboarding</div>
+        <div class="value">3 slides la primera vez que se abre la app, guardado con <code>AsyncStorage</code> para no repetirse</div>
+      </div>
+    </div>
+
+    <div class="decisions">
+      <div class="decision">
+        <div>
+          <h3>El audio no "escucha" la falla — transcribe tu voz</h3>
+          <p>No existe un modelo confiable para detectar una falla mecánica solo por el patrón de sonido. En vez de simularlo, se pide describir el problema en voz alta y Gemini lo diagnostica como si fuera texto.</p>
+        </div>
+      </div>
+      <div class="decision">
+        <div>
+          <h3>Nunca mezclar animación JS con animación nativa</h3>
+          <p>Un mismo <code>Animated.View</code> no puede tener un color animado por JS (<code>useNativeDriver:false</code>) junto a transformaciones nativas — causaba crashes reales. Se resolvió separando esas capas en componentes aparte.</p>
+        </div>
+      </div>
+      <div class="decision">
+        <div>
+          <h3>"Calmar la alerta" nunca toca el contenido, solo el tono</h3>
+          <p>Un diagnóstico peligroso no se puede marcar como "resuelto" solo porque se calmó el color de la pantalla — badge y contenido reflejan el riesgo real; el botón de calma solo afecta el acento visual global.</p>
+        </div>
+      </div>
+      <div class="decision">
+        <div>
+          <h3>El cliente de Supabase no puede tronar si faltan las env vars</h3>
+          <p><code>createClient()</code> lanza una excepción si la URL viene vacía — eso tumbaría la app entera en un build sin las variables configuradas. Se blindó con una URL de relleno para fallar en gris, no en crash.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="privacy">
+      <div class="mark">●</div>
+      <p><strong>Nota de privacidad:</strong> la API key de Gemini viaja embebida en el cliente porque es un proyecto de materia sin backend propio todavía — antes de publicarlo en serio, iría detrás de una Edge Function. Las fotos y audios solo se envían a Gemini para el diagnóstico puntual; lo único que se guarda en Supabase es el resultado (texto), nunca el archivo original.</p>
+    </div>
+  </section>
+
+  <footer>
+    <span>RepararIA — proyecto de Interfaces de software</span>
+    <span>React Native · Expo · Supabase · Gemini</span>
+  </footer>
+
+</div>
