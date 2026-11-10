@@ -139,3 +139,144 @@ function Slideshow({ project }: { project: Project }) {
 function Screen({ project }: { project: Project }) {
   const t = useT();
 
+  if (project.images.length === 0) {
+    // Sin capturas todavía: portada tipográfica dentro de la pantalla
+    return (
+      <div className="flex h-full w-full flex-col items-center justify-center gap-3 bg-on-accent text-accent">
+        <span className="display text-[clamp(2.5rem,6vw,5rem)]">{project.title}</span>
+        <span className="micro text-accent/70">{t(ui.projects.shotsSoon)}</span>
+      </div>
+    );
+  }
+
+  const [first] = project.images;
+  if (project.video) {
+    return <ProjectVideo src={project.video} poster={first.src} label={t(first.alt)} />;
+  }
+  return (
+    <Image src={first.src} alt={t(first.alt)} fill sizes="(min-width: 768px) 50vw, 90vw" className="object-cover object-top" />
+  );
+}
+
+// Capítulo 02: bloque cian a todo el ancho; cada proyecto es una ficha clara con su dispositivo al lado
+export default function Projects() {
+  const root = useRef<HTMLElement>(null);
+  const t = useT();
+
+  useGSAP(
+    () => {
+      gsap.matchMedia().add(MOTION_OK, () => {
+        gsap.utils.toArray<HTMLElement>(".project-row").forEach((row) => {
+          gsap.fromTo(
+            row.querySelector(".project-device"),
+            { y: 90 },
+            {
+              y: -90,
+              ease: "none",
+              scrollTrigger: { trigger: row, start: "top bottom", end: "bottom top", scrub: true },
+            },
+          );
+        });
+      });
+    },
+    { scope: root },
+  );
+
+  return (
+    <section
+      id="proyectos"
+      ref={root}
+      data-scene="2"
+      className="relative rounded-t-[2.5rem] bg-accent px-5 py-[14vh] text-on-accent md:px-8"
+    >
+      <div className="micro flex items-center gap-4">
+        <span className="rounded-full bg-on-accent px-2 py-0.5 text-accent">02</span>
+        <span>{t(ui.nav.projects)}</span>
+        <span data-reveal="line" className="h-px flex-1 bg-on-accent/30" aria-hidden="true" />
+      </div>
+
+      <div className="mt-10 grid gap-6 md:grid-cols-12 md:items-end">
+        <h2 data-reveal="split" data-end="top 40%" className="display text-[clamp(4rem,13vw,13rem)] md:col-span-8">
+          <Split text={t(ui.projects.title)} by="chars" />
+        </h2>
+        <p data-reveal="rise" className="max-w-sm text-lg leading-snug md:col-span-4">
+          {t(ui.projects.intro)}
+        </p>
+      </div>
+
+      <div className="mt-[10vh] grid gap-[12vh]">
+        {projects.map((project, i) => (
+          <article
+            key={project.slug}
+            className="project-row grid items-center gap-10 md:grid-cols-12 md:gap-12"
+          >
+            <div
+              data-reveal="rise"
+              data-end="top 55%"
+              className={`rounded-[2rem] bg-bg p-6 text-fg md:col-span-6 md:p-10 ${i % 2 ? "md:order-2" : ""}`}
+            >
+              <div className="micro flex justify-between gap-4 text-fg/65">
+                <span>{t(project.platform)}</span>
+                <span>
+                  {String(i + 1).padStart(2, "0")} / {String(projects.length).padStart(2, "0")}
+                </span>
+              </div>
+
+              <h3 className="display mt-6 text-[clamp(3rem,6.5vw,6.5rem)]">{project.title}</h3>
+              <p className="mt-4 text-xl font-medium leading-tight tracking-tight">{t(project.tagline)}</p>
+              <p className="mt-4 leading-snug text-fg/75">{t(project.description)}</p>
+
+              <h4 className="micro mt-8 text-fg/65">{t(ui.projects.highlights)}</h4>
+              <ul className="mt-3 grid gap-2">
+                {project.highlights.map((h) => (
+                  <li key={h.es} className="flex gap-3 text-sm leading-snug">
+                    <span className="mt-1.5 h-2 w-2 shrink-0 rounded-full bg-accent" aria-hidden="true" />
+                    {t(h)}
+                  </li>
+                ))}
+              </ul>
+
+              <ul className="mt-8 flex flex-wrap gap-2" aria-label="Tecnologías">
+                {project.tags.map((tag) => (
+                  <li key={tag}>
+                    <TechChip name={tag} className="text-fg/80" />
+                  </li>
+                ))}
+              </ul>
+
+              <div className="mt-8 flex flex-wrap gap-3">
+                <ProjectLink href={project.github} label={t(ui.projects.repo)} primary />
+                {project.sheet && <ProjectLink href={project.sheet} label={t(ui.projects.sheet)} />}
+                {project.downloadLabel && (
+                  <ProjectLink href={project.download ?? ""} label={t(project.downloadLabel)} download />
+                )}
+              </div>
+            </div>
+
+            <div className={`project-device md:col-span-6 ${i % 2 ? "md:order-1" : ""}`}>
+              {project.images.length > 1 && !project.video ? (
+                <Slideshow project={project} />
+              ) : (
+                <DeviceFrame device={project.device}>
+                  <Screen project={project} />
+                </DeviceFrame>
+              )}
+              {project.gallery && (
+                <ul className={`mt-4 grid gap-3 ${project.gallery.length === 2 ? "grid-cols-2" : "grid-cols-3"}`}>
+                  {project.gallery.map((shot) => (
+                    <li
+                      key={shot.src}
+                      className="relative aspect-video overflow-hidden rounded-xl border-[5px] border-on-accent bg-on-accent"
+                    >
+                      <Image src={shot.src} alt={t(shot.alt)} fill sizes="(min-width: 768px) 16vw, 30vw" className="object-cover" />
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
+          </article>
+        ))}
+      </div>
+    </section>
+  );
+}
